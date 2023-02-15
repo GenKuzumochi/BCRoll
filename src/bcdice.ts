@@ -6,7 +6,10 @@ const loader = new StaticLoader();
 
 const list = [
     { regex: /cl/i, value: "CodeLayerd" },
-    { regex: /dx/i, value: "DoubleCross" }
+    { regex: /^cc/i, value: "Cthulhu7th" },
+    { regex: /^ccb<=/i, value: "Cthulhu" },
+    { regex: /dx/i, value: "DoubleCross" },
+    { regex: /gc/i, value: "GranCrest", replacer: (s:string)=>s.replace(/gc/,"d") + ">=?"}
 ]
 
 type BCDiceResult = {
@@ -16,7 +19,9 @@ type BCDiceResult = {
 
 export function bcdice_roll(text: string, system?: string): BCDiceResult | null {
     if (system == null) {
-        system = list.find(x => x.regex.test(text))?.value ?? "DiceBot"
+        const sys = list.find(x => x.regex.test(text))
+        system = sys?.value ?? "DiceBot"
+        text = sys?.replacer?.(text) ?? text
     }
     const cls = loader.getGameSystemClass(system);
 

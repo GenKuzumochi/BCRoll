@@ -30,6 +30,9 @@ client.once("ready", async () => {
                             .setName('system')
                             .setRequired(false)
                     ),
+                new SlashCommandBuilder()
+                    .setName("bcdice")
+                    .setDescription("BCDiceRollのコマンドを実行します")
             ].map((command) => command.toJSON())
         )
     // const x = new SlashCommandBuilder()
@@ -47,11 +50,18 @@ client.once("ready", async () => {
 client.on('messageCreate', async (message: Message) => {
     try {
         if (message.author.bot) return;
+
+        if (message.content === "!omikuji") {
+            const array = ["【大吉】", "【中吉】", "【吉】", "【小吉】", "【末吉】", "【末凶】", "【凶】", "【中凶】", "【大凶】", "【豚】"];
+            const res = array[Math.floor(Math.random() * array.length)];
+            message.reply({ content: res })
+        }
+
         const res = bcdice_roll(message.content)
         if (res == null) return;
 
         const sys = res.system;
-        let text = sys + res.result.text;
+        let text = res.result.text;
         const emb = new EmbedBuilder()
             .setColor(res.result.success ? 0x0000FF : (res.result.failure ? 0xFF0000 : 0))
             .setDescription(text)
