@@ -7,7 +7,7 @@ const loader = new StaticLoader();
 const list = [
     { regex: /cl/i, value: "CodeLayerd" },
     { regex: /^cc/i, value: "Cthulhu7th" },
-    { regex: /^ccb<=/i, value: "Cthulhu" },
+    { regex: /^ccb/i, value: "Cthulhu" },
     { regex: /dx/i, value: "DoubleCross" },
     { regex: /gc/i, value: "GranCrest", replacer: (s:string)=>s.replace(/gc/,"d") + ">=?"}
 ]
