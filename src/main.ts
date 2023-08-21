@@ -1,6 +1,8 @@
 import { Message, Client, GatewayIntentBits, SlashCommandBuilder, REST, IntentsBitField, EmbedBuilder } from 'discord.js'
 import dotenv from 'dotenv'
 import { bcdice_roll, systems } from './bcdice'
+import {readdir,readFile} from "node:fs/promises";
+import { UserDefinedDiceTable } from 'bcdice';
 
 dotenv.config()
 
@@ -8,8 +10,13 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds, IntentsBitField.Flags.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 })
 
-
+let userdefinedList : string[] = [];
 client.once("ready", async () => {
+    try{
+        userdefinedList = await readdir("userdefined")
+    }catch(_){
+        userdefinedList = [];
+    }
     console.log(systems.map(x => ({ name: `${x.name}(${x.id})`, value: x.id })));
     await client.application?.commands
         .set(
@@ -51,11 +58,19 @@ client.on('messageCreate', async (message: Message) => {
     try {
         if (message.author.bot) return;
 
-        if (message.content === "!omikuji") {
-            const array = ["【大吉】", "【中吉】", "【吉】", "【小吉】", "【末吉】", "【末凶】", "【凶】", "【中凶】", "【大凶】", "【豚】"];
-            const res = array[Math.floor(Math.random() * array.length)];
-            message.reply({ content: res })
+        if(message.content.startsWith("!")){
+            const cmd = message.content.substring(1).split(/\W/)[0]
+            for(const c of userdefinedList) { 
+                if( c === cmd) {
+                    const file = await readFile("userdefined/" + cmd)
+                    const data = file.toString("utf8")
+                    const u = new UserDefinedDiceTable(data)
+                    const result = u.roll()
+                    message.reply({ content: result?.text })
+                }
+            }
         }
+
 
         const res = bcdice_roll(message.content)
         if (res == null) return;
