@@ -58,7 +58,20 @@ client.on('messageCreate', async (message: Message) => {
     try {
         if (message.author.bot) return;
 
-        if(message.content.startsWith("!")){
+        if(message.content.startsWith("!rgba")){
+            const rgb = Math.floor(Math.random() * 255 * 255 * 255);
+            const alpha = Math.floor(Math.random() * 255);
+            const code = "#" + rgb.toString(16).padStart(6,"0") + alpha.toString(16).padStart(2,"0");
+            const emb = new EmbedBuilder()
+            .setColor(rgb).setTitle(code!);
+            message.reply({embeds:[emb]})
+        }else if(message.content.startsWith("!rgb")){
+            const rgb = Math.floor(Math.random() * 255 * 255 * 255);
+            const code = "#" + rgb.toString(16).padStart(6,"0");
+            const emb = new EmbedBuilder()
+            .setColor(rgb).setTitle(code!);
+            message.reply({embeds:[emb]})
+        }else if(message.content.startsWith("!")){
             const cmd = message.content.substring(1).split(/\W/)[0]
             for(const c of userdefinedList) { 
                 if( c === cmd) {
